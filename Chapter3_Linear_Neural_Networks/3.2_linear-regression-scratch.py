@@ -43,7 +43,7 @@ def main():
     # 特征标签图
     set_figsize()
     plt.scatter(features[:,1].numpy(), labels.numpy(), s=1)
-    plt.savefig('./figures/3.1_linear-regression-scratch.jpg')
+    plt.savefig('./figures/3.2_linear-regression-scratch.jpg')
 
     # 读取数据
     batch_size = 10
