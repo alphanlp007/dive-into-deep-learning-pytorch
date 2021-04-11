@@ -15,6 +15,7 @@ class LinearRegressionNet(nn.Module):
         self.linear = nn.Linear(n_features, n_outputs)
 
     def forward(self, x):
+        """前向传播"""
         y = self.linear(x)
         return y
 
@@ -24,7 +25,7 @@ def generateData(nums_samples, nums_features):
         返回Tensor类型
     """
 
-    # config weights and bias
+    # config true weights and bias
     true_w = [2, -3.4]
     true_b = 4.2
 
@@ -33,8 +34,7 @@ def generateData(nums_samples, nums_features):
     labels   = true_w[0]*features[:,0] + true_w[1]*features[:,1] + true_b
 
     # 添加均值为0，方差为0.01的噪声项
-    labels += torch.tensor(np.random.normal(0, 0.01, size=labels.size()),
-                           dtype=torch.float32)
+    labels += torch.tensor(np.random.normal(0, 0.01, size=labels.size()), dtype=torch.float32)
     
     return features, labels
 
@@ -49,16 +49,17 @@ def data_iter(batch_size, features, labels):
                                 shuffle=True,           # 随机打乱训练数据
                                 num_workers=2,          # 多线程读取数据
     )
+
     return data_iter
 
 def train(features, labels):
     ### Step 1：模型结构搭建 ###
     num_inputs = 2
 
-    # 网络结构定义方法1(单层神经网络)
+    # 网络结构定义方法1(单层神经网络，不能对层进行索引)
     net = LinearRegressionNet(num_inputs)
     
-    # # # 以下几个网络定义方法可以按层索引 net[0],net[1]# # #
+    # # # 以下几个网络定义方法可以按层索引 net[0],net[1] # # #
     # # 网络结构定义方法2
     # net = nn.Sequential(LinearRegressionNet(num_inputs, 1)
     #                     # 此处还可以传入其他层
@@ -117,9 +118,9 @@ def train(features, labels):
             output = net(X)
             l = loss(output, y.view(-1,1))
             # optimizer.zero_grad() # 梯度清零，避免梯度累加
-            l.backward() # 计算梯度
-            optimizer.step() # 参数更新
-            optimizer.zero_grad() # 梯度清零
+            l.backward()            # 计算梯度
+            optimizer.step()        # 参数更新
+            optimizer.zero_grad()   # 梯度清零
         print('epoch %d, loss: %f' % (epoch, l.item()))
     print("weight_0:",list(net.parameters())[0].data)
     print("bias_0:", list(net.parameters())[1].data)
