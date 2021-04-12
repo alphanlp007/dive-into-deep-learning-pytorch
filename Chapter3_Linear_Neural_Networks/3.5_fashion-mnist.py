@@ -1,28 +1,15 @@
 # -*- coding:utf-8 -*-
+# 2021.04.11
 import torch
 import torchvision
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 
-def show_fashion_mnist(images, labels):
-    from IPython import display
-    """Use svg format to display plot"""
-    display.set_matplotlib_formats('svg')
-    _, figs = plt.subplots(1, len(images), figsize = (12, 12))
-    for f, img, lbl in zip(figs, images, labels):
-        f.imshow(img.view(28, 28).numpy())
-        f.set_title(lbl)
-        f.axes.get_xaxis().set_visible(False)
-        f.axes.get_yaxis().set_visible(False)       
-    # plt.show() # linux系统不支持图像显示
-    plt.savefig('../figures/3.5_fashion-mnist.jpg')
-
-def get_fashion_mnist_labels(labels):
-    """将数字标签转换为文本标签"""
-    text_labels = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
-                   'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
-    
-    return [text_labels[int(i)] for i in labels]
+# 导入当前目录的父目录的package
+import os,sys
+sys.path.append("..")
+sys.path.append(os.path.dirname(__file__) + os.sep + '../')
+from utils.utils import show_fashion_mnist, get_fashion_mnist_labels
 
 def data_iter(batch_size, data, shuffle = True):
     """
@@ -45,8 +32,16 @@ def data_iter(batch_size, data, shuffle = True):
 
 def main():
     # Step 1：获取数据集
-    mnist_train = torchvision.datasets.FashionMNIST(root='./Datasets/', train=True, download=True, transform=transforms.ToTensor())
-    mnist_test  = torchvision.datasets.FashionMNIST(root='./Datasets/', train=False, download=True, transform=transforms.ToTensor())
+    mnist_train = torchvision.datasets.FashionMNIST(root='./Datasets/', 
+                                                    train=True, 
+                                                    download=True, 
+                                                    transform=transforms.ToTensor()
+                                                    )
+    mnist_test  = torchvision.datasets.FashionMNIST(root='./Datasets/', 
+                                                    train=False, 
+                                                    download=True, 
+                                                    transform=transforms.ToTensor()
+                                                    )
 
     ### begin Unit Test ###
     # output FashionMNIST
@@ -62,7 +57,7 @@ def main():
     for i in range(10):
         X.append(mnist_train[i][0])  # features
         y.append(mnist_train[i][1])  # labels
-    show_fashion_mnist(X, get_fashion_mnist_labels(y))   
+    show_fashion_mnist(X, get_fashion_mnist_labels(y),'../figures/test.jpg') 
 
     train_iter = data_iter(batch_size = 256, data = mnist_train, shuffle = True)
     test_iter  = data_iter(batch_size = 256, data = mnist_test,  shuffle = False)

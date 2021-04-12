@@ -50,3 +50,25 @@ def sgd(params, lr, batch_size):
         # 梯度需要除以batch_size的大小，当前损失的平均梯度
         # 注意这里更改param时用的param.data
         param.data -= lr * param.grad / batch_size 
+
+
+############ 3.5_fashion-mnist.py ############
+def show_fashion_mnist(images, labels, imagepath='../figures/result.jpg'):
+    from IPython import display
+    """Use svg format to display plot"""
+    display.set_matplotlib_formats('svg')
+    _, figs = plt.subplots(1, len(images), figsize = (12, 12))
+    for f, img, lbl in zip(figs, images, labels):
+        f.imshow(img.view(28, 28).numpy())
+        f.set_title(lbl)
+        f.axes.get_xaxis().set_visible(False)
+        f.axes.get_yaxis().set_visible(False)       
+    # plt.show() # linux系统不支持图像显示
+    plt.savefig(imagepath)
+
+def get_fashion_mnist_labels(labels):
+    """将数字标签转换为文本标签"""
+    text_labels = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
+                   'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+    
+    return [text_labels[int(i)] for i in labels]
