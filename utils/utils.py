@@ -51,7 +51,6 @@ def sgd(params, lr, batch_size):
         # 注意这里更改param时用的param.data
         param.data -= lr * param.grad / batch_size 
 
-
 ############ 3.5_fashion-mnist.py ############
 def show_fashion_mnist(images, labels, imagepath='../figures/result.jpg'):
     from IPython import display
@@ -72,3 +71,45 @@ def get_fashion_mnist_labels(labels):
                    'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
     
     return [text_labels[int(i)] for i in labels]
+
+############ 3.6_softmax-regression-scratch.py ############
+def load_data_fashion_mnist(batch_size):
+    """
+    功能：加载和读取数据集
+    返回：train_iter和test_iter
+    """
+    import torchvision
+    import torchvision.transforms as transforms
+    # Step 1：获取数据集
+    mnist_train = torchvision.datasets.FashionMNIST(root='./Datasets/', 
+                                                    train=True, 
+                                                    download=True, 
+                                                    transform=transforms.ToTensor()
+                                                    )
+    mnist_test  = torchvision.datasets.FashionMNIST(root='./Datasets/', 
+                                                    train=False, 
+                                                    download=True, 
+                                                    transform=transforms.ToTensor()
+                                                    )
+    # Step 2：CPU线程数量判断
+    import sys
+    if sys.platform.startswith('win'):
+        num_workers = 0
+    else:
+        num_workers = 1
+
+    # Step 3：数据data和label组合在一起，返回迭代器对象
+    train_iter = torch.utils.data.DataLoader(dataset = mnist_train, 
+                                             batch_size = batch_size, 
+                                             shuffle = True, 
+                                             num_workers = num_workers
+                                            )
+
+    test_iter = torch.utils.data.DataLoader(dataset = mnist_test, 
+                                            batch_size = batch_size, 
+                                            shuffle = False, 
+                                            num_workers = num_workers
+                                            )
+    
+    # Step 4：返回训练数据和测试数据迭代器对象
+    return train_iter, test_iter
