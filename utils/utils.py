@@ -63,7 +63,10 @@ def show_fashion_mnist(images, labels, imagepath='../figures/result.jpg'):
         f.axes.get_xaxis().set_visible(False)
         f.axes.get_yaxis().set_visible(False)       
     # plt.show() # linux系统不支持图像显示
-    plt.savefig(imagepath)
+    try:
+        plt.savefig(imagepath)
+    except FileNotFoundError:
+        raise FileNotFoundError
 
 def get_fashion_mnist_labels(labels):
     """将数字标签转换为文本标签"""

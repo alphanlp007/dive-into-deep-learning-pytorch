@@ -1,8 +1,6 @@
 # -*- coding:utf-8 -*-
 # 2021.04.12
 import torch
-import torchvision
-import torchvision.transforms as transforms
 import numpy as np
 
 # 导入当前目录的父目录的package
@@ -48,25 +46,27 @@ def cross_entropy(y_hat, y):
     loss = torch.gather(y_hat, 1, y.view(-1, 1))
     return -torch.log(loss) # 计算batch中每个样本的交叉熵损失
 
-# 定义随机梯度下降优化算法
 def sgd(params, lr, batch_size):
+    # 定义随机梯度下降优化算法
     for param in params:
         # 1）参数使用param.data，获取纯数据
         # 2) 梯度为何要处理batch_size，梯度是mini batch上梯度的累加，所以要除以batch_size的大小
         param.data -= lr * param.grad / batch_size
 
 def accuracy(y_hat, y):
+    # 精度率统计
     bool_res = (y_hat.argmax(dim = 1) == y) # tensor([False,  True])
     float_res = bool_res.float()            # tensor([0., 1.])
     scalar_value = float_res.mean().item()  # 0.5
     return scalar_value
 
 def evaluate_accuracy(data_iter, net):
+    # 在数据集上统计精确率
     acc_sum, n = 0.0, 0
     for X, y in data_iter:
         acc_sum += (net(X).argmax(dim = 1) == y).float().sum().item()
         n += y.shape[0]
-    return acc_sum / n # 除以总样本量是否正确？ ==>解释：预测正确的总数量，除以总的测试样本数
+    return acc_sum / n # 除以总样本量是否正确？ ==> 解释：预测正确的总数量，除以总的测试样本数，混淆矩阵中的TP
 
 def init_weight(num_inputs, num_outputs):
     # W权重初始化为均值为0，方差为0.01的张量矩阵
@@ -84,17 +84,20 @@ def train(net, train_iter, test_iter, loss, num_epochs, batch_size, params = Non
     train_iter：训练数据迭代器
     test_iter ：测试数据集迭代
     loss：损失函数
+    params：网络中待优化参数
     """
     for epoch in range(num_epochs):
         train_loss_sum, train_acc_sum, n = 0.0, 0.0, 0
         for X, y in train_iter:
             y_hat = net(X)
-            loss_ = loss(y_hat, y).sum() # 当前batch的交叉熵总和
+            loss_ = loss(y_hat, y).sum() # 当前batch的交叉熵总和，即损失值
 
-            # 梯度清零，否则会出现梯度累加
-            if optimizer is not None: # 使用Pytorch优化器
+            ### 梯度清零，否则会出现梯度累加，再进行反向传播计算网络参数的梯度 ###
+            if optimizer is not None: 
+                # 使用Pytorch优化器，判断是否指定优化算法
                 optimizer.zero_grad()
-            elif params is not None and params[0].grad is not None: # 使用自己编写的优化器
+            elif params is not None and params[0].grad is not None: 
+                # 使用自己编写的优化器，判断输入参数和梯度是否为None
                 for param in params:
                     param.grad.data.zero_()
 
@@ -108,7 +111,7 @@ def train(net, train_iter, test_iter, loss, num_epochs, batch_size, params = Non
                 optimizer.step()
 
             train_loss_sum += loss_.item() # 累加每个batch的损失函数值
-            train_acc_sum += (y_hat.argmax(dim=1) == y).sum().item() # 累加每个batch预测正确的样本数量
+            train_acc_sum  += (y_hat.argmax(dim=1) == y).sum().item() # 累加每个batch预测正确的样本数量
             n += y.shape[0]
 
         # 单个epoch训练结束，评估模型在测试集上的精度
@@ -127,7 +130,7 @@ def predict(net, test_iter):
     show_fashion_mnist(X[10:19], titles[10:19], imagepath='../figures/3.6_softmax-regression-scratch.jpg')
 
 def main():
-    # 全局变量配置
+    # 全局变量配置, Python中的全局变量只能先定义后赋值
     global num_inputs, W, b
 
     # Step 1：config parameters
