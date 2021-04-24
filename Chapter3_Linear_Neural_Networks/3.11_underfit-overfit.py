@@ -30,7 +30,7 @@ def semilogy(x_vals, y_vals, x_label, y_label, x2_vals=None, y2_vals=None,
     try:
         plt.savefig(imagepath)
     except FileNotFoundError:
-        raise FileNotFoundError
+        raise FileNotFoundError("没有找到要保存的路径。")
 
 # 生成数据集
 def data_iter():
