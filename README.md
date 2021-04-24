@@ -1,2 +1,1 @@
-Text
-print("Hello Python.")
+

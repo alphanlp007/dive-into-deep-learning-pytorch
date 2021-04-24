@@ -116,3 +116,31 @@ def load_data_fashion_mnist(batch_size):
     
     # Step 4：返回训练数据和测试数据迭代器对象
     return train_iter, test_iter
+
+
+############ 3.16_kaggle-house-price.py ############
+def semilogy(x_vals, y_vals, x_label, y_label, x2_vals=None, y2_vals=None,
+             legend=None, figsize=(10, 8), imagepath='../figures/3.11_underfit-overfit.jpg'):
+    """
+    x_vals: 原始数据x
+    y_vals: 原始数据y
+    x_labels: x轴标签
+    y_labels: y轴标签
+    x2_vals: 对比数据x
+    y2_vals: 对比数据y
+    legend: 数据曲线标签
+    matplotlib：plt.semilogx(*args, **kwargs) 和 plt.semilogy(*args, **kwargs)
+    描述：用于绘制折线图，两个函数的 x 轴、y 轴分别是指数型的
+    """
+    plt.figure(figsize=figsize)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.semilogy(x_vals,y_vals)
+    if x2_vals and y2_vals:
+        plt.semilogy(x2_vals, y2_vals, linestyle=':')
+        plt.legend(legend)
+    
+    try:
+        plt.savefig(imagepath)
+    except FileNotFoundError:
+        raise FileNotFoundError("没有找到要保存的路径。")
