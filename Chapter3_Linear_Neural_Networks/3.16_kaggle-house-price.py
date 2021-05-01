@@ -77,8 +77,9 @@ def get_net(num_features):
         nn.init.normal_(param, mean=0,std=0.01)
     return net
 
+# ref: 均方误差(MSE)和均方根误差(RMSE) https://blog.csdn.net/qq_31821675/article/details/82025527
 loss = nn.MSELoss() # MSELoss：均方损失函数，预测值和真实值之间差的平方和的平均数
-def log_rmse(net, features, labels): # 
+def log_rmse(net, features, labels): # 对数均方根误差_P130
     with torch.no_grad():  # 不进行计算图的构建
         # 将小于1的值设置成1，使得取对数时数值更稳定
         clipped_preds = torch.max(net(features), torch.tensor(1.0))
