@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 # 5.1 ⼆维卷积层
 import numpy as np
-from numpy.core.fromnumeric import reshape
 import torch
 from torch import nn
 
@@ -60,6 +59,7 @@ def main():
     K = np.array([[1, -1]]) 
     Y = corr2d(X, K)
 
+    print("X:\n", X)
     print("Y:\n", Y)
 
     """5.1.4 核数组学习"""
@@ -67,20 +67,27 @@ def main():
     # kernel of shape (1, 2). For the sake of simplicity, we ignore the bias here
     # nn.Conv2d(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True))
     # 方法1
-    conv2d = nn.Conv2d(1,1, kernel_size=(1, 2), bias=False)                     # 卷积核对象
-    print("initialize kernel weight：",reshape(conv2d.weight.data, (1, 2)))     # 
+    # # 使用Pytorch封装类
+    # conv2d = nn.Conv2d(1,1, kernel_size=(1, 2), bias=False)                     # 卷积核对象
+    # print("initialize kernel weight：",reshape(conv2d.weight.data, (1, 2)))     # 卷积核数组随机初始化数值
 
     # 方法2
     # 使用自定义类
     conv2d = Conv2D(kernel_size=(1,2))
-    
+    print("initialize kernel weight：", torch.reshape(conv2d.weight.data, (1, 2)))     # 卷积核数组随机初始化数值
+
     # The two-dimensional convolutional layer uses four-dimensional input and
     # output in the format of (example channel, height, width), where the batch
     # size (number of examples in the batch) and the number of channels are both 1
-    X = torch.tensor(X.reshape(1, 1, 6, 8), dtype=torch.float32)   # 输入
-    Y = torch.tensor(Y.reshape(1, 1, 6, 7), dtype=torch.float32)   # 卷积输出
+    # X = torch.tensor(X.reshape(1, 1, 6, 8), dtype=torch.float32)   # 卷积输入(example channel, height, width)
+    # Y = torch.tensor(Y.reshape(1, 1, 6, 7), dtype=torch.float32)   # 卷积输出(example channel, height, width)
 
-    for i in range(10):
+    X = torch.tensor(X, dtype=torch.float32)
+    Y = torch.tensor(Y, dtype=torch.float32)
+    X = torch.reshape(X, (6, 8))
+    Y = torch.reshape(Y, (6, 7))
+
+    for i in range(20):
         Y_hat = conv2d(X)
         loss = (Y_hat - Y) ** 2
         conv2d.zero_grad()      # 梯度清零
